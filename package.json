@@ -1,0 +1,24 @@
+{
+  "name": "empolyee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlossmith77/empolyee-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carlossmith77/empolyee-tracker/issues"
+  },
+  "homepage": "https://github.com/carlossmith77/empolyee-tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "jest": "^24.8.0"
+  }
+}
