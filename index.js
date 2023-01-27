@@ -110,10 +110,11 @@ const generateCards = team => {
     // conditionals for if it is a manager, engineer, intern
     const engineer = `
         <div>
-        ${engineer.getgithubusername}
-        ${engineer.getName()}
+        ${Engineer.getgithubusername}
+        ${Engineer.getName()}
         </div>`;
-    htmlArr.push(engineer);
+    htmlArr.push(Engineer);
+    console.log(htmlArr, "htmlarr")
     team.forEach(employee => {
         // run a conditional 
         // if (team.getRole() === "Manager")
