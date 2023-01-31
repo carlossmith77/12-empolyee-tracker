@@ -1,12 +1,15 @@
 const { Model, DataTypes } = require('sequelize');
 
-const sequelize = require('../config/connection');
+const sequelize = require('../db/connection');
 
 class Employee extends Model {}
 
 Employee.init(
   {
-    category_name:{type: DataTypes.STRING}
+    last_name:{type: DataTypes.STRING},
+    first_name:{type: DataTypes.STRING},
+    role_id:{type:DataTypes.INTEGER},
+    manager_id:{type:DataTypes.INTEGER}
   },
   {
     sequelize,
@@ -17,4 +20,4 @@ Employee.init(
   }
 );
 
-module.exports(Employee);
+module.exports=Employee;

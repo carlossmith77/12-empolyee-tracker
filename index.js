@@ -4,7 +4,12 @@ const inquirer = require('inquirer')
 // require your classes
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
+const Department = require('./models/department');
+const Role = require('./models/role');
+const Employee = require('./models/employee');
 const Intern = require('./lib/Intern');
+const Sequelize=require('./db/connection');
+const { response } = require('express');
 
 // arr for your inquirer prompts
 var teamArr = [];
@@ -163,8 +168,222 @@ const choicesPrompt = () => {
             }
         })
 }
+function viewEmployee(){
 
-createManager();
+}
+
+function updateEmployee(){
+    
+}
+
+async function veiwAllEmployees(){
+    const rows =await Sequelize.query("SELECT * FROM view_employees");
+   
+    console.table(rows[0]);
+    mainMenu();
+}
+
+async function addRoles(){
+    const title = await prompt("What is the name of the role?");
+    const salary = await prompt("What is the salary of the role?");
+    const deptId = await getDepartmentId("What is the department for the role?");
+    const role = {title:title, salary:salary, department_id:deptId}
+   
+    Role.create(role);
+    
+    mainMenu();
+}
+async function addNewEmployee(){
+   
+    const firstName = await prompt("What is the employee's last name?");
+    const lastName = await prompt("What is the employee's first name?");
+    const roleId = await getRoleId("What is the employee's role?");
+    const managerId = await getManagerId("Who is the employee's manager?");
+    const emp = {last_name:lastName, first_name:firstName, role_id:roleId, manager_id:managerId}
+   
+    Employee.create(emp);
+    
+    mainMenu();
+}
+async function veiwAllDepartments(){
+    const rows =await Department.findAll();
+    const data = [];
+    for(let i in rows)
+    {
+        data.push (rows[i].dataValues);
+    }
+    console.table(data, ['id', 'department_name']);
+    mainMenu();
+}
+async function veiwAllRoles(){
+    const rows =await Sequelize.query("SELECT * FROM view_roles");
+   
+    console.table(rows[0]);
+    mainMenu();
+}
+async function getDepartmentId(message){
+    const rows =await Department.findAll();
+    const data = [];
+    for(let i in rows)
+    {
+        data.push ({value: rows[i].dataValues.id, name:rows[i].dataValues.department_name});
+    }
+
+    const dept =await inquirer.prompt([
+        {
+            name:"deptId",
+            type:"list",
+            message:message,
+            choices:data
+        }
+    ])
+ 
+    return dept.deptId;
+}
+async function getRoleId(message){
+    const rows =await Role.findAll();
+    const data = [];
+    for(let i in rows)
+    {
+        data.push ({value: rows[i].dataValues.id, name:rows[i].dataValues.title});
+    }
+
+    const role =await inquirer.prompt([
+        {
+            name:"roleId",
+            type:"list",
+            message:message,
+            choices:data
+        }
+    ])
+   
+    return role.roleId;
+}
+async function getManagerId(message){
+    const rows =await Employee.findAll();
+    const data = [];
+    for(let i in rows)
+    {
+        data.push ({value: rows[i].dataValues.id, name:rows[i].dataValues.last_name+", "+rows[i].dataValues.first_name});
+    }
+
+    const mgr =await inquirer.prompt([
+        {
+            name:"managerId",
+            type:"list",
+            message:message,
+            choices:data
+        }
+    ])
+   
+    return mgr.managerId;
+}
+async function getEmployeeId(message){
+    const rows =await Employee.findAll();
+    const data = [];
+    for(let i in rows)
+    {
+        data.push ({value: rows[i].dataValues.id, name:rows[i].dataValues.last_name+", "+rows[i].dataValues.first_name});
+    }
+
+    const emp =await inquirer.prompt([
+        {
+            name:"employeeId",
+            type:"list",
+            message:message,
+            choices:data
+        }
+    ])
+   
+    return emp.employeeId;
+}
+async function updateEmployee ()
+{
+    const empId = await getEmployeeId("Which employee's role do you want to update?");
+    const roleId = await getRoleId("Which role do you want to assign to the selected employee?");
+    const emp = await Employee.findByPk(empId);
+
+    if(emp)
+    {
+        emp.update({role_id:roleId});
+    } 
+    mainMenu();
+}
+async function addNewDepartment(){
+    const deptName = await prompt ("What is the name of the department?");
+    const dept = {department_name:deptName}
+    Department.create(dept);
+    mainMenu();
+}
+
+async function prompt(msg) {
+    const ans = await inquirer
+        .prompt([
+            {
+                name: 'answer',
+                message: msg
+            },
+        ]);
+
+    return ans.answer;
+}
+
+
+
+const mainMenu = () => {
+
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'Would would you like to do ?',
+                choices: ['View All Employees','Add New Employee', 'Update Employee Role',"View All Roles",'Add Roles',
+                'View All Departments','Add New Department', 'end'],
+                name: 'choice'
+
+            }
+        ])
+        .then((response) => {
+            // run a conditional statement
+            if (response.choice === 'View Employee') {
+                viewEmployee();
+            }
+            if(response.choice === 'Update Employee Role'){
+                 updateEmployee();
+            }
+            if(response.choice === 'View All Roles'){
+                veiwAllRoles();
+            }
+            if(response.choice === 'View All Employees'){
+                veiwAllEmployees();
+            }
+            if(response.choice === 'Add Roles')
+            {
+                addRoles();
+            }
+            if(response.choice === 'View All Departments')
+            {
+                veiwAllDepartments();
+            }
+            if(response.choice === 'Add New Department')
+            {
+                addNewDepartment();
+            }
+            if(response.choice === 'Add New Employee')
+            {
+                addNewEmployee();
+            }
+            if (response.choice === "end") {
+                return;
+            }
+
+           // if (response.choice === '')
+        })
+}
+
+
+
+mainMenu();
 
 
 

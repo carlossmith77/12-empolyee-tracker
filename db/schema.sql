@@ -1,5 +1,2 @@
--- DROP DATABASE
 DROP DATABASE IF EXISTS Employeetrack_db;
-
--- CREATE DATABASE
 CREATE DATABASE Employeetrack_db;
